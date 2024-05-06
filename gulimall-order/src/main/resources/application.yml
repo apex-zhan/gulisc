@@ -1,0 +1,20 @@
+# 应用服务 WEB 访问端口# MyBatis 配置
+server:
+  port: 9000
+
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.200.133:3306/gulimall_oms
+    driver-class-name: com.mysql.jdbc.Driver
+
+#    用于指定MyBatis-Plus框架在项目中查找Mapper映射文件的位置。id-type：指定主键的生成策略。这里使用了auto，表示自动生成主键。MyBatis-Plus会根据数据库的类型自动选择合适的生成策略，例如自增、雪花算法等
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+
+
+
