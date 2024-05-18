@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: root
-    password: 123456
+    password: root
     url: jdbc:mysql://192.168.200.133:3306/gulimall_pms #商品服务数据
     driver-class-name: com.mysql.jdbc.Driver
 

@@ -40,7 +40,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 默认所有的配置集都属于：DEFAULT_GROUP；
  * 1111，618，1212
  * <p>
- * 项目中的使用：每个微服务创建自己的命名空间，使用配置分组区分环境，dev，test，prod
+ * 项目中的使用：每个微服务创建自己的命名空间，使用配置分组区分环境，dev(生产环境)，test(测试环境)，prod(线上环境）
  * <p>
  * 3、同时加载多个配置集
  * 1)、微服务任何配置信息，任何配置文件都可以放在配置中心中
@@ -48,6 +48,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 3）、@Value，@ConfigurationProperties。。。
  * 以前SpringBoot任何方法从配置文件中获取值，都能使用。
  * 配置中心有的优先使用配置中心中的，
+ */
+
+
+/**
+ * 启用nacos服务发现客户端@EnableDiscoveryClient
  */
 @EnableDiscoveryClient
 @SpringBootApplication
