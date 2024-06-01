@@ -17,6 +17,7 @@ import java.util.List;
  */
 @Data
 @TableName("pms_category")
+//通过实现 Serializable 接口获得了可序列化的能力，便于数据的持久化存储与网络传输
 public class CategoryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

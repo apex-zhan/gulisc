@@ -20,10 +20,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<CategoryEntity> page = this.page(
-                new Query<CategoryEntity>().getPage(params),
-                new QueryWrapper<CategoryEntity>()
-        );
+        IPage<CategoryEntity> page = this.page(new Query<CategoryEntity>().getPage(params), new QueryWrapper<CategoryEntity>());
 
         return new PageUtils(page);
     }
@@ -33,31 +30,33 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //1.查出所有分类
         List<CategoryEntity> entities = baseMapper.selectList(null);
         //2.组装成父子树形结构
-
         //2.1找到所有的一级分类
-        List<CategoryEntity> level1Menus = entities.stream().filter((categoryEntity) -> {
-            return categoryEntity.getParentCid() == 0;
-        }).map((menu) -> {
-            menu.setChildren(getChildren(menu, entities));
+        List<CategoryEntity> level1Menus = entities.stream().filter(CategoryEntity -> CategoryEntity.getParentCid() == 0).map(menu -> {
+            menu.setChildren(getChildrens(menu, entities));
             return menu;
-        }).sorted((menu1, menu2) -> {
-            return menu1.getSort() - menu2.getSort();
+        }).sorted((menu, menu2) -> {
+            return (menu.getSort() == null ? 0 : menu.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
         return level1Menus;
     }
 
-    //    递归查找菜单的子菜单
-    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
-        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
-            return root.getCatId() == categoryEntity.getParentCid();
-        }).map((categoryEntity) -> {
-            //找到子菜单
-            categoryEntity.setChildren(getChildren(categoryEntity, all));
-            return categoryEntity;
-        }).sorted((menu1, menu2) -> {
-//                菜单的排序
-            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
-        }).collect(Collectors.toList());
+    /**
+     * 获取某一个菜单的子菜单方法
+     * 递归查找所有菜单的子菜单
+     * CategoryEntity root 当前菜单
+     * List<CategoryEntity> all 所有菜单
+     * Comparator.nullsLast(Comparator.comparing(CategoryEntity::getSort))不会判断null时的情况，这个方法写不出来呜呜呜
+     */
+    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
+        List<CategoryEntity> children = all.stream().filter(categoryEntity -> categoryEntity.getParentCid() == root.getCatId()).map(categoryEntity -> {
+                    //找到子菜单
+                    categoryEntity.setChildren(getChildrens(categoryEntity, all));
+                    return categoryEntity;
+                    //排序
+                }).sorted((menu, menu2) -> {
+                    return (menu.getSort() == null ? 0 : menu.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
+                })
+                .collect(Collectors.toList());
         return children;
     }
 }
