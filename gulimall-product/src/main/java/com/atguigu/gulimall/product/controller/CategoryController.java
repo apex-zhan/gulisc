@@ -32,7 +32,6 @@ public class CategoryController {
     public R list(@RequestParam Map<String, Object> params) {
         // 查询所有树形列表数据
         List<CategoryEntity> entities = categoryService.listWithTree();
-
         return R.ok().put("data", entities);
     }
 

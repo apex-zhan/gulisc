@@ -35,12 +35,29 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //2.组装成父子树形结构
 
         //2.1找到所有的一级分类
-        entities.stream().filter((categoryEntity) -> {
+        List<CategoryEntity> level1Menus = entities.stream().filter((categoryEntity) -> {
             return categoryEntity.getParentCid() == 0;
+        }).map((menu) -> {
+            menu.setChildren(getChildren(menu, entities));
+            return menu;
+        }).sorted((menu1, menu2) -> {
+            return menu1.getSort() - menu2.getSort();
         }).collect(Collectors.toList());
-
-
-        return entities;
+        return level1Menus;
     }
 
+    //    递归查找菜单的子菜单
+    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
+        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
+            return root.getCatId() == categoryEntity.getParentCid();
+        }).map((categoryEntity) -> {
+            //找到子菜单
+            categoryEntity.setChildren(getChildren(categoryEntity, all));
+            return categoryEntity;
+        }).sorted((menu1, menu2) -> {
+//                菜单的排序
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
+        }).collect(Collectors.toList());
+        return children;
+    }
 }
